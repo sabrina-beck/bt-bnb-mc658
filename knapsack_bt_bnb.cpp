@@ -150,14 +150,14 @@ bool bnb(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, ve
 		double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
 		if(elapsedSecs > t) {
 			convertIntoSolution(solForMaxProfit, sol);
-			//cout << maxProfit << "\n";
+			cout << maxProfit << " 1 \n";
 			return false;
 		}
 
 	}
 
 	convertIntoSolution(solForMaxProfit, sol);
-	//cout << maxProfit << "\n";
+	cout << maxProfit << " 2 \n";
 
 	return true;
 }
@@ -197,14 +197,14 @@ int upper_bound(TreeNodeBnb node, int n, int d, int B, vector<UserBnb> users) {
 	// of descending order of profit per weight unit starting on the user that came after
 	// the k-th user
 	int j;
-	for(j = node.k + 1; j < n && is_feasible_solution(d, B, 0, totalWeight); j++){
+	for(j = node.k + 1; j < n && is_feasible_solution(d, B, node.addedClasses.size(), totalWeight); j++){
 		totalWeight += users[j].weight;
 		upperBound += users[j].profit;
 	}
 
 	// If j is not n, we know that we can add the j-th user partially
 	if(j < n) {
-		upperBound += (B - totalWeight) * users[j].profitPerUnitWeight;
+		upperBound += (B - totalWeight - d*(node.addedClasses.size()-1)) * users[j].profitPerUnitWeight;
 	}
 
 	return upperBound;
