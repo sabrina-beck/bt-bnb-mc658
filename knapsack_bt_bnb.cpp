@@ -14,13 +14,34 @@
 // Nome2: Sabrina Beck Angelini
 // RA2: 157240
 
+typedef struct UserBt {
+	int id;
+	int profit;
+	int weight;
+	int clazz;
+} UserBt;
+
+bool bt_recursive(int i, int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c,
+																						int maxProfit,
+																						vector<int> users,
+																						set<int> addedClasses, clock_t begin) {
+	for(int k = i; k < n; k++) {
+
+		// test solution with the k-th user
+
+	}
+}
 
 ///
 // Bactracking function: 
 ///
 bool bt(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, vector<int> &sol, int t){
-	
-	return false;
+
+    clock_t begin = clock();
+ 
+    //bool result = bt_recursive(n, d, B, p, w, c, sol, maxProfit, solForMaxProfit, begin);
+ 
+    return true;
 }
 
 
@@ -166,12 +187,16 @@ bool bnb(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, ve
 /*    BRANCH AND BOUND PRIVATE FUNCTIONS      */
 /**********************************************/
 
+int consumedCapacity(int d, int usedClasses, int weight) {
+	return weight + d * (usedClasses - 1);
+}
+
 bool compareByProfitPerUnitWeightDesc(UserBnb user1, UserBnb user2) {
 	return user1.profitPerUnitWeight > user2.profitPerUnitWeight;
 }
 
 bool is_feasible_solution(int d, int B, int usedClasses, int weight) {;
-	return weight + d * (usedClasses - 1) <= B;
+	return consumedCapacity(d, usedClasses, weight) <= B;
 }
 
 bool is_feasible_solution(int d, int B, TreeNodeBnb node) {
@@ -185,7 +210,7 @@ int upper_bound(TreeNodeBnb node, int n, int d, int B, vector<UserBnb> users) {
 	// or if the maximum capacity has been overcome
 	// than the upper bound will be zero because we will
 	// waste our time with non feasible solutions
-	if(node.weight + d * (node.addedClasses.size() - 1) >= B) {
+	if(consumedCapacity(d, node.addedClasses.size(), node.weight) >= B) {
 		return 0;
 	}
 
@@ -204,7 +229,7 @@ int upper_bound(TreeNodeBnb node, int n, int d, int B, vector<UserBnb> users) {
 
 	// If j is not n, we know that we can add the j-th user partially
 	if(j < n) {
-		upperBound += (B - totalWeight - d*(node.addedClasses.size()-1)) * users[j].profitPerUnitWeight;
+		upperBound += (B - consumedCapacity(d, node.addedClasses.size(), totalWeight)) * users[j].profitPerUnitWeight;
 	}
 
 	return upperBound;
