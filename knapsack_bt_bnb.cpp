@@ -196,7 +196,7 @@ int upper_bound(TreeNodeBnb node, int n, int d, int B, vector<UserBnb> users) {
 
 	// If j is not n, we know that we can add the j-th user partially
 	if(j < n) {
-		upperBound += (B - totalWeight) * users[j].profit / users[j].weight;
+		upperBound += (B - totalWeight) * users[j].profitPerUnitWeight;
 	}
 
 	return upperBound;
