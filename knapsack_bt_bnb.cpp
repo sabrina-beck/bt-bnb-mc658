@@ -84,7 +84,7 @@ bool bnb(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, ve
 	int maxProfit = 0;
 	vector<UserBnb> solForMaxProfit;
 
-	// Initialize the queue
+	// Initialize the priority queue
 	priority_queue<TreeNodeBnb, vector<TreeNodeBnb>, CompareTreeNodeBnb> nodesQueue;
 
 	TreeNodeBnb initialDummyNode;
@@ -94,10 +94,11 @@ bool bnb(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, ve
 	nodesQueue.push(initialDummyNode);
 
 	while(!nodesQueue.empty()) {
-		// Dequeue
+		// Dequeue - the priority queue will always give the node with maximum upper bound
 		TreeNodeBnb current = nodesQueue.top();
 		nodesQueue.pop();
 
+		// Cut solutions that does not give us an upper bound greater than our current solution
 		if(current.upperBound < maxProfit) {
 			continue;
 		}
