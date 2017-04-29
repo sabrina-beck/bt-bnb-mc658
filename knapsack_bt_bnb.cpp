@@ -14,14 +14,10 @@
 // Nome2: Sabrina Beck Angelini
 // RA2: 157240
 
-///
-// Bactracking function: 
-///
-bool bt(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, vector<int> &sol, int t){
-	
-	return false;
-}
 
+/**********************************************/
+/*       DECLARATION FOR PRIVATE USE          */
+/**********************************************/
 typedef struct UserBnb {
 	int id;
 	int profit;
@@ -39,58 +35,18 @@ typedef struct TreeNodeBnb {
 	set<int> addedClasses;
 } TreeNodeBnb;
 
-bool compareByProfitPerUnitWeightDesc(UserBnb user1, UserBnb user2) {
-	return user1.profitPerUnitWeight > user2.profitPerUnitWeight;
-}
+bool compareByProfitPerUnitWeightDesc(UserBnb user1, UserBnb user2);
+bool is_feasible_solution(int d, int B, TreeNodeBnb node);
+int upper_bound(TreeNodeBnb node, int n, int d, int B, vector<UserBnb> users);
+void convertIntoSolution(vector<UserBnb> addedUsers, vector<int> &sol);
 
-bool is_feasible_solution(int d, int B, int usedClasses, int weight) {;
-	return weight + d * (usedClasses - 1) <= B;
-}
 
-bool is_feasible_solution(int d, int B, TreeNodeBnb node) {
-	int usedClasses = node.addedClasses.size();
-	return is_feasible_solution(d, B, usedClasses, node.weight);
-}
-
-int upper_bound(TreeNodeBnb node, int n, int d, int B, vector<UserBnb> users) {
-
-	// If the maximum capacity has been reached on the current node level
-	// or if the maximum capacity has been overcome
-	// than the upper bound will be zero because we will
-	// waste our time with non feasible solutions
-	if(node.weight + d * (node.addedClasses.size() - 1) >= B) {
-		return 0;
-	}
-
-	// The upper bound starts with the node profit
-	int upperBound = node.profit;
-	int totalWeight = node.weight;
-
-	// We start to simulate the upper bound by putting the users ussing the greedy approach
-	// of descending order of profit per weight unit starting on the user that came after
-	// the k-th user
-	// We will not consider the classes on the upper bound calculation, we will still find an upper bound 
-	int j;
-	for(j = node.k + 1; j < n && is_feasible_solution(d, B, 0, totalWeight); j++){
-		totalWeight += users[j].weight;
-		upperBound += users[j].profit;
-	}
-
-	// If j is not n, we know that we can add the j-th user partially
-	if(j < n) {
-		upperBound += (B - totalWeight) * users[j].profit / users[j].weight;
-	}
-
-	return upperBound;
-
-}
-
-void convertIntoSolution(vector<UserBnb> addedUsers, vector<int> &sol) {
-	// transform the added users into the solution vector
-	for(int i = 0; i < addedUsers.size(); i++) {
-		UserBnb addedUser = addedUsers[i];
-		sol[addedUser.id] = 1;
-	}
+///
+// Bactracking function: 
+///
+bool bt(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, vector<int> &sol, int t){
+	
+	return false;
 }
 
 ///
@@ -182,14 +138,71 @@ bool bnb(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, ve
 		double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
 		if(elapsedSecs > t) {
 			convertIntoSolution(solForMaxProfit, sol);
-			cout << maxProfit << "\n";
+			//cout << maxProfit << "\n";
 			return false;
 		}
 
 	}
 
 	convertIntoSolution(solForMaxProfit, sol);
-	cout << maxProfit << "\n";
+	//cout << maxProfit << "\n";
 
 	return true;
+}
+
+/**********************************************/
+/*    BRANCH AND BOUND PRIVATE FUNCTIONS      */
+/**********************************************/
+
+bool compareByProfitPerUnitWeightDesc(UserBnb user1, UserBnb user2) {
+	return user1.profitPerUnitWeight > user2.profitPerUnitWeight;
+}
+
+bool is_feasible_solution(int d, int B, int usedClasses, int weight) {;
+	return weight + d * (usedClasses - 1) <= B;
+}
+
+bool is_feasible_solution(int d, int B, TreeNodeBnb node) {
+	int usedClasses = node.addedClasses.size();
+	return is_feasible_solution(d, B, usedClasses, node.weight);
+}
+
+int upper_bound(TreeNodeBnb node, int n, int d, int B, vector<UserBnb> users) {
+
+	// If the maximum capacity has been reached on the current node level
+	// or if the maximum capacity has been overcome
+	// than the upper bound will be zero because we will
+	// waste our time with non feasible solutions
+	if(node.weight + d * (node.addedClasses.size() - 1) >= B) {
+		return 0;
+	}
+
+	// The upper bound starts with the node profit
+	int upperBound = node.profit;
+	int totalWeight = node.weight;
+
+	// We start to simulate the upper bound by putting the users ussing the greedy approach
+	// of descending order of profit per weight unit starting on the user that came after
+	// the k-th user
+	int j;
+	for(j = node.k + 1; j < n && is_feasible_solution(d, B, 0, totalWeight); j++){
+		totalWeight += users[j].weight;
+		upperBound += users[j].profit;
+	}
+
+	// If j is not n, we know that we can add the j-th user partially
+	if(j < n) {
+		upperBound += (B - totalWeight) * users[j].profit / users[j].weight;
+	}
+
+	return upperBound;
+
+}
+
+void convertIntoSolution(vector<UserBnb> addedUsers, vector<int> &sol) {
+	// transform the added users into the solution vector
+	for(int i = 0; i < addedUsers.size(); i++) {
+		UserBnb addedUser = addedUsers[i];
+		sol[addedUser.id] = 1;
+	}
 }
