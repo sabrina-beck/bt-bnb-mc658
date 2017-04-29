@@ -91,6 +91,10 @@ bool bnb(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, ve
 		TreeNodeBnb current = nodesQueue.front();
 		nodesQueue.pop();
 
+		if(current.upperBound < maxProfit) {
+			continue;
+		}
+
 		// if it is a leaf we can't build new solutions with it
 		if(current.k == n-1) {
 			continue;
@@ -138,14 +142,14 @@ bool bnb(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, ve
 		double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
 		if(elapsedSecs > t) {
 			convertIntoSolution(solForMaxProfit, sol);
-			//cout << maxProfit << "\n";
+			cout << maxProfit << "\n";
 			return false;
 		}
 
 	}
 
 	convertIntoSolution(solForMaxProfit, sol);
-	//cout << maxProfit << "\n";
+	cout << maxProfit << "\n";
 
 	return true;
 }
