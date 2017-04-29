@@ -185,25 +185,25 @@ bool bnb(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, ve
 			nodesQueue.push(nodeWithoutKthUser);
 		}
 
-		///
-		// Code used to generate the report data
-		///
-		//clock_t end = clock();
-		//double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
-		//if(elapsedSecs > t) {
-		//	convertIntoSolution(solForMaxProfit, sol);
-		//	cout << maxProfit << "\n";
-		//	cout << "Timeout\n";
-		//	cout << "Execution time: " << elapsedSecs << "\n";
-		//	return false;
-		//}
+		clock_t end = clock();
+		double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
+		if(elapsedSecs > t) {
+			convertIntoSolution(solForMaxProfit, sol);
+			///
+			// Code used to generate the report data
+			///
+			//cout << maxProfit << "\n";
+			//cout << "Timeout\n";
+			//cout << "Execution time: " << elapsedSecs << "\n";
+			return false;
+		}
 
 	}
 
 	convertIntoSolution(solForMaxProfit, sol);
 
 	///
-	// Code used to generate the report data
+	// 	Code used to generate the report data
 	///
 	//clock_t end = clock();
 	//double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
