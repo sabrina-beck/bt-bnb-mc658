@@ -15,9 +15,18 @@
 // RA2: 157240
 
 
-/**********************************************/
-/*       DECLARATION FOR PRIVATE USE          */
-/**********************************************/
+///
+// Bactracking function: 
+///
+bool bt(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, vector<int> &sol, int t){
+	
+	return false;
+}
+
+
+/*****************************************************/
+/*       DECLARATION FOR PRIVATE USE BY BNB          */
+/*****************************************************/
 typedef struct UserBnb {
 	int id;
 	int profit;
@@ -46,15 +55,6 @@ bool compareByProfitPerUnitWeightDesc(UserBnb user1, UserBnb user2);
 bool is_feasible_solution(int d, int B, TreeNodeBnb node);
 int upper_bound(TreeNodeBnb node, int n, int d, int B, vector<UserBnb> users);
 void convertIntoSolution(vector<UserBnb> addedUsers, vector<int> &sol);
-
-
-///
-// Bactracking function: 
-///
-bool bt(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, vector<int> &sol, int t){
-	
-	return false;
-}
 
 ///
 // Branch and Bound function
