@@ -35,6 +35,13 @@ typedef struct TreeNodeBnb {
 	set<int> addedClasses;
 } TreeNodeBnb;
 
+struct CompareTreeNodeBnb {
+    bool operator() (TreeNodeBnb node1, TreeNodeBnb node2) {
+        // return "true" if "node1" is ordered after "node2", for example:
+        return node1.upperBound > node2.upperBound;
+    }
+};
+
 bool compareByProfitPerUnitWeightDesc(UserBnb user1, UserBnb user2);
 bool is_feasible_solution(int d, int B, TreeNodeBnb node);
 int upper_bound(TreeNodeBnb node, int n, int d, int B, vector<UserBnb> users);
@@ -78,7 +85,7 @@ bool bnb(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, ve
 	vector<UserBnb> solForMaxProfit;
 
 	// Initialize the queue
-	queue<TreeNodeBnb> nodesQueue;
+	priority_queue<TreeNodeBnb, vector<TreeNodeBnb>, CompareTreeNodeBnb> nodesQueue;
 
 	TreeNodeBnb initialDummyNode;
 	initialDummyNode.profit = 0;
@@ -88,7 +95,7 @@ bool bnb(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, ve
 
 	while(!nodesQueue.empty()) {
 		// Dequeue
-		TreeNodeBnb current = nodesQueue.front();
+		TreeNodeBnb current = nodesQueue.top();
 		nodesQueue.pop();
 
 		if(current.upperBound < maxProfit) {
@@ -142,14 +149,14 @@ bool bnb(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, ve
 		double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
 		if(elapsedSecs > t) {
 			convertIntoSolution(solForMaxProfit, sol);
-			cout << maxProfit << "\n";
+			//cout << maxProfit << "\n";
 			return false;
 		}
 
 	}
 
 	convertIntoSolution(solForMaxProfit, sol);
-	cout << maxProfit << "\n";
+	//cout << maxProfit << "\n";
 
 	return true;
 }
