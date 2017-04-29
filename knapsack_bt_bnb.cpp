@@ -14,23 +14,18 @@
 // Nome2: Sabrina Beck Angelini
 // RA2: 157240
 
-typedef struct UserBt {
-	int id;
-	int profit;
+/*****************************************************/
+/*       DECLARATION FOR PRIVATE USE BY BT           */
+/*****************************************************/
+typedef struct ResultBt {
+	int maxProfit;
 	int weight;
-	int clazz;
-} UserBt;
+	vector<int> addedUsers;
+} ResultBt;
 
-bool bt_recursive(int i, int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c,
-																						int maxProfit,
-																						vector<int> users,
-																						set<int> addedClasses, clock_t begin) {
-	for(int k = i; k < n; k++) {
-
-		// test solution with the k-th user
-
-	}
-}
+void convertIntoSolution(ResultBt resultBt, vector<int> &sol);
+bool backtrackingRecursive(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, int t, clock_t begin,
+						ResultBt &bestResult, ResultBt &currentResult);
 
 ///
 // Bactracking function: 
@@ -39,9 +34,21 @@ bool bt(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, vec
 
     clock_t begin = clock();
  
-    //bool result = bt_recursive(n, d, B, p, w, c, sol, maxProfit, solForMaxProfit, begin);
+ 	ResultBt bestResult;
+ 	bestResult.maxProfit = 0;
+ 	bestResult.weight = 0;
+
+ 	ResultBt currentResult;
+ 	currentResult.maxProfit = 0;
+ 	currentResult.weight = 0;
+
+    bool finished = backtrackingRecursive(n, d, B, p, w, c, t, begin, bestResult, currentResult);
  
-    return true;
+ 	convertIntoSolution(bestResult, sol);
+
+ 	cout << bestResult.maxProfit << "\n";
+
+    return finished;
 }
 
 
@@ -171,25 +178,99 @@ bool bnb(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, ve
 		double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
 		if(elapsedSecs > t) {
 			convertIntoSolution(solForMaxProfit, sol);
-			cout << maxProfit << " 1 \n";
+			cout << maxProfit << "\n";
 			return false;
 		}
 
 	}
 
 	convertIntoSolution(solForMaxProfit, sol);
-	cout << maxProfit << " 2 \n";
+	cout << maxProfit << "\n";
 
 	return true;
 }
 
 /**********************************************/
-/*    BRANCH AND BOUND PRIVATE FUNCTIONS      */
+/*        COMMON PRIVATE FUNCTIONS            */
 /**********************************************/
 
 int consumedCapacity(int d, int usedClasses, int weight) {
 	return weight + d * (usedClasses - 1);
 }
+
+/**********************************************/
+/*      BACKTRACKING PRIVATE FUNCTIONS        */
+/**********************************************/
+
+void convertIntoSolution(ResultBt resultBt, vector<int> &sol) {
+
+	for(int i = 0; i < resultBt.addedUsers.size(); i++) {
+		int userId = resultBt.addedUsers[i];
+		sol[userId] = 1;
+	}
+
+}
+
+int consumedCapacity(int d, vector<int> &c, ResultBt resultBt) {
+	set<int> addedClasses;
+
+	for(int i = 0; i < resultBt.addedUsers.size(); i++) {
+		int userId = resultBt.addedUsers[i];
+		addedClasses.insert(c[i]);
+	}
+
+	return consumedCapacity(d, addedClasses.size(), resultBt.weight);
+}
+
+bool backtrackingRecursive(int n, int d, int B, vector<int> &p, vector<int> &w, vector<int> &c, int t, clock_t begin,
+						ResultBt &bestResult, ResultBt &currentResult) {
+	
+	// base case
+	if(n == 0 || consumedCapacity(d, c, currentResult) >= B) {
+		if(bestResult.maxProfit < currentResult.maxProfit) {
+			bestResult = currentResult;
+		}
+
+		currentResult.maxProfit = 0;
+		currentResult.weight = 0;
+		currentResult.addedUsers.clear();
+
+		clock_t end = clock();
+		double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
+		if(elapsedSecs > t) {
+			return false;
+		}
+
+		return true;
+	}
+
+	// try to add the n-th user
+	ResultBt resultWithNthUser;
+	resultWithNthUser.maxProfit = currentResult.maxProfit + p[n-1];
+	resultWithNthUser.weight = currentResult.weight + w[n-1];
+	resultWithNthUser.addedUsers.insert(resultWithNthUser.addedUsers.end(), currentResult.addedUsers.begin(), currentResult.addedUsers.end());
+	resultWithNthUser.addedUsers.push_back(n-1);
+
+	// if the user requirements are too big, so we can't include this user in the optimal solution
+	if(consumedCapacity(d, c, resultWithNthUser) > B) {
+		// continue without N-th user
+		return backtrackingRecursive(n-1, d, B, p, w, c, t, begin, bestResult, currentResult);
+	}
+
+	// otherwise, we calculate wich is the best, the solution with or without n-th user
+	bool finishedWithNthUser = backtrackingRecursive(n-1, d, B, p, w, c, t, begin, bestResult, resultWithNthUser);
+
+	if(finishedWithNthUser) {
+		return backtrackingRecursive(n-1, d, B, p, w, c, t, begin, bestResult, currentResult);
+	}
+
+	return false;
+
+}
+
+/**********************************************/
+/*    BRANCH AND BOUND PRIVATE FUNCTIONS      */
+/**********************************************/
 
 bool compareByProfitPerUnitWeightDesc(UserBnb user1, UserBnb user2) {
 	return user1.profitPerUnitWeight > user2.profitPerUnitWeight;
